@@ -43,7 +43,7 @@ public class RequestControllerIntegrationTest {
         MvcResult results = mvc.perform(MockMvcRequestBuilders.post("/request")
             .contentType(MediaType.APPLICATION_JSON)
             .characterEncoding("utf-8")
-            .content(generateRequest("hello")))
+            .content(generateRequest("request1")))
             .andDo(print())
             .andExpect(status().isOk())
             .andReturn();
@@ -63,20 +63,19 @@ public class RequestControllerIntegrationTest {
                 .andExpect(status().isBadRequest());
     }
 
-    // TODO: Controller is not failing.
     @Test
     public void testWithSameRequest_Return409() throws Exception{
         mvc.perform(MockMvcRequestBuilders.post("/request")
                 .contentType(MediaType.APPLICATION_JSON)
                 .characterEncoding("utf-8")
-                .content(generateRequest("hello")))
+                .content(generateRequest("request2")))
                 .andDo(print())
                 .andExpect(status().isOk());
 
         mvc.perform(MockMvcRequestBuilders.post("/request")
                 .contentType(MediaType.APPLICATION_JSON)
                 .characterEncoding("utf-8")
-                .content(generateRequest("hello")))
+                .content(generateRequest("request2")))
                 .andDo(print())
                 .andExpect(status().is(409));
     }

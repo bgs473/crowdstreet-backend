@@ -16,7 +16,7 @@ public class CallbackService {
 
     public String generateRequestId(Request request) {
         RequestDao requestDao = new RequestDao();
-        request.setBody(request.getBody());
+        requestDao.setBody(request.getBody());
         repository.save(requestDao);
         return requestDao.getId().toString();
     }

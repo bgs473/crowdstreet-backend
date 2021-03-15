@@ -14,7 +14,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -48,16 +48,36 @@ public class RequestControllerIntegrationTest {
             .andExpect(status().isOk())
             .andReturn();
 
-        assertEquals("hello", results.getResponse().getContentAsString());
+        String pattern = "\\d*";
+        String actual = results.getResponse().getContentAsString();
+        assertTrue("The string must be digits only.", actual.matches(pattern));
     }
 
     @Test
-    public void testWithEmptyRequest() throws Exception{
+    public void testWithEmptyRequest_Return400() throws Exception{
         mvc.perform(MockMvcRequestBuilders.post("/request")
                 .contentType(MediaType.APPLICATION_JSON)
                 .characterEncoding("utf-8")
                 .content(generateRequest(" ")))
                 .andDo(print())
                 .andExpect(status().isBadRequest());
+    }
+
+    // TODO: Controller is not failing.
+    @Test
+    public void testWithSameRequest_Return409() throws Exception{
+        mvc.perform(MockMvcRequestBuilders.post("/request")
+                .contentType(MediaType.APPLICATION_JSON)
+                .characterEncoding("utf-8")
+                .content(generateRequest("hello")))
+                .andDo(print())
+                .andExpect(status().isOk());
+
+        mvc.perform(MockMvcRequestBuilders.post("/request")
+                .contentType(MediaType.APPLICATION_JSON)
+                .characterEncoding("utf-8")
+                .content(generateRequest("hello")))
+                .andDo(print())
+                .andExpect(status().is(409));
     }
 }

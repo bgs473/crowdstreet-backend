@@ -53,14 +53,11 @@ public class RequestControllerIntegrationTest {
 
     @Test
     public void testWithEmptyRequest() throws Exception{
-        MvcResult results = mvc.perform(MockMvcRequestBuilders.post("/request")
+        mvc.perform(MockMvcRequestBuilders.post("/request")
                 .contentType(MediaType.APPLICATION_JSON)
                 .characterEncoding("utf-8")
-                .content(generateRequest("")))
+                .content(generateRequest(" ")))
                 .andDo(print())
-                .andExpect(status().isOk())
-                .andReturn();
-
-        assertEquals("hello", results.getResponse().getContentAsString());
+                .andExpect(status().isBadRequest());
     }
 }

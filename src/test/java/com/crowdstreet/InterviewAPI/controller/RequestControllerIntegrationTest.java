@@ -14,6 +14,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -65,18 +66,22 @@ public class RequestControllerIntegrationTest {
 
     @Test
     public void testWithSameRequest_Return409() throws Exception{
-        mvc.perform(MockMvcRequestBuilders.post("/request")
+        MvcResult mvcResult1 = mvc.perform(MockMvcRequestBuilders.post("/request")
                 .contentType(MediaType.APPLICATION_JSON)
                 .characterEncoding("utf-8")
                 .content(generateRequest("request2")))
                 .andDo(print())
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+            .andReturn();
 
-        mvc.perform(MockMvcRequestBuilders.post("/request")
+        MvcResult mvcResult2 = mvc.perform(MockMvcRequestBuilders.post("/request")
                 .contentType(MediaType.APPLICATION_JSON)
                 .characterEncoding("utf-8")
                 .content(generateRequest("request2")))
                 .andDo(print())
-                .andExpect(status().is(409));
+                .andExpect(status().isOk())
+            .andReturn();
+
+        assertEquals(mvcResult1.getResponse().getContentAsString(), mvcResult2.getResponse().getContentAsString());
     }
 }

@@ -1,5 +1,6 @@
 package com.crowdstreet.InterviewAPI;
 
+import com.crowdstreet.InterviewAPI.exception.RequestException;
 import com.crowdstreet.InterviewAPI.exception.ThirdPartyException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -22,5 +23,11 @@ public class ControllerAdvice {
     @ExceptionHandler(ThirdPartyException.class)
     public void handleThirdPartyException(ThirdPartyException e) {
         log.error("There was an error communicating with example.com.", e);
+    }
+
+    @ResponseStatus(value = HttpStatus.NOT_FOUND)
+    @ExceptionHandler(RequestException.class)
+    public void handleRequestException(RequestException e) {
+        log.error("Unable to find request.");
     }
 }

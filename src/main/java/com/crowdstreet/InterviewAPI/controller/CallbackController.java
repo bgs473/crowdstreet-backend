@@ -25,6 +25,8 @@ public class CallbackController {
     @GetMapping(path = "/callback/{id}")
     public RequestDao getCallback(@PathVariable String id){
         log.info("Received Get Callback with id: " + id);
-        return callbackService.getCallback(id);
+        RequestDao result = callbackService.getCallback(id);
+        log.debug(result.toString());
+        return result;
     }
 }

@@ -3,6 +3,7 @@ package com.crowdstreet.InterviewAPI.service;
 import com.crowdstreet.InterviewAPI.exception.ThirdPartyException;
 import com.crowdstreet.InterviewAPI.model.Request;
 import com.crowdstreet.InterviewAPI.model.RequestDao;
+import com.crowdstreet.InterviewAPI.model.ThirdPartyRequest;
 import com.crowdstreet.InterviewAPI.repository.ApiRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +29,7 @@ public class CallbackService {
             log.info("Generated request ID: " + requestDao.getId());
 
             try {
-                thirdPartyService.call(request, requestDao.getId().toString());
+                thirdPartyService.call(request.getBody(), requestDao.getId().toString());
             } catch (ThirdPartyException e) {
                 repository.delete(requestDao);
                 throw e;
@@ -40,4 +41,12 @@ public class CallbackService {
         return requestDao.getId().toString();
     }
 
+    public void postCallback(String id) {
+        try {
+            thirdPartyService.call("STARTED", id);
+        } catch (ThirdPartyException e) {
+            log.error("Post callback to third party failed.");
+            throw e;
+        }
+    }
 }

@@ -25,14 +25,15 @@ public class ThirdPartyService {
                 .setConnectTimeout(Duration.ofSeconds(10l))
                 .build();
     }
-    public void call(Request request, String id) throws ThirdPartyException{
-        ThirdPartyRequest thirdPartyRequest = generateRequest(request, id);
+
+    public void call(String body, String id) throws ThirdPartyException{
+        ThirdPartyRequest thirdPartyRequest = generateRequest(body, id);
         sendRequest(thirdPartyRequest);
     }
 
-    private ThirdPartyRequest generateRequest(Request request, String id){
+    private ThirdPartyRequest generateRequest(String body, String id){
         ThirdPartyRequest thirdPartyRequest = new ThirdPartyRequest();
-        thirdPartyRequest.setBody(request.getBody());
+        thirdPartyRequest.setBody(body);
         thirdPartyRequest.setCallback("/callback/" + id);
 
         log.info("Generated ThirdPartyRequest with:" + thirdPartyRequest.toString());

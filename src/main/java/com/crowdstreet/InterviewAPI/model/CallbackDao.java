@@ -7,7 +7,7 @@ import java.sql.Date;
 
 @Data
 @Entity
-@Table(name = "Requests")
+@Table(name = "Callback")
 public class CallbackDao {
 
     @Id

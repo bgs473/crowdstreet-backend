@@ -1,6 +1,8 @@
 package com.crowdstreet.InterviewAPI.controller;
 
+import com.crowdstreet.InterviewAPI.service.CallbackService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -8,9 +10,13 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 public class CallbackController {
 
+    @Autowired
+    CallbackService callbackService;
+
     @ResponseStatus(value = HttpStatus.CREATED)
     @PostMapping(path = "/callback/{id}")
     public void postCallback(@PathVariable String id, @RequestBody String body){
-
+        log.info("Received Post Callback with id: " + id + " body:" + body );
+        callbackService.postCallback(id);
     }
 }

@@ -1,7 +1,7 @@
-package com.crowdstreet.InterviewAPI.Request.controller;
+package com.crowdstreet.InterviewAPI.controller;
 
 import com.crowdstreet.InterviewAPI.InterviewApiApplication;
-import com.crowdstreet.InterviewAPI.Request.model.Request;
+import com.crowdstreet.InterviewAPI.model.Request;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Test;
 import org.junit.runner.RunWith;

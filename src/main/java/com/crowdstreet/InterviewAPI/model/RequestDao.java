@@ -1,4 +1,4 @@
-package com.crowdstreet.InterviewAPI.Request.model;
+package com.crowdstreet.InterviewAPI.model;
 
 import lombok.Data;
 
@@ -7,6 +7,7 @@ import java.sql.Date;
 
 @Data
 @Entity
+@Table(name = "Requests")
 public class RequestDao {
 
     @Id

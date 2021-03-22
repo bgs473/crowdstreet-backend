@@ -1,11 +1,14 @@
 package com.crowdstreet.InterviewAPI.controller;
 
-import com.crowdstreet.InterviewAPI.model.RequestDao;
+import com.crowdstreet.InterviewAPI.model.CallbackPutRequest;
+import com.crowdstreet.InterviewAPI.model.RequestDto;
 import com.crowdstreet.InterviewAPI.service.CallbackService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 
 @Slf4j
 @RestController
@@ -22,11 +25,16 @@ public class CallbackController {
     }
 
     @ResponseStatus(value = HttpStatus.CREATED)
+    @PutMapping(path = "/callback/{id}")
+    public void putCallback(@PathVariable String id, @RequestBody @Valid CallbackPutRequest request){
+        log.info("Received Put Callback with id: " + id + " body:" + request.toString() );
+        callbackService.putCallback(id, request);
+    }
+
+    @ResponseStatus(value = HttpStatus.CREATED)
     @GetMapping(path = "/callback/{id}")
-    public RequestDao getCallback(@PathVariable String id){
+    public RequestDto getCallback(@PathVariable String id){
         log.info("Received Get Callback with id: " + id);
-        RequestDao result = callbackService.getCallback(id);
-        log.debug(result.toString());
-        return result;
+        return callbackService.getCallback(id);
     }
 }

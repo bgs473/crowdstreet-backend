@@ -1,11 +1,12 @@
 package com.crowdstreet.InterviewAPI.service;
 
+import com.crowdstreet.InterviewAPI.enums.StatusEnum;
 import com.crowdstreet.InterviewAPI.exception.RequestException;
 import com.crowdstreet.InterviewAPI.exception.ThirdPartyException;
+import com.crowdstreet.InterviewAPI.model.CallbackPutRequest;
 import com.crowdstreet.InterviewAPI.model.Request;
-import com.crowdstreet.InterviewAPI.model.RequestDao;
-import com.crowdstreet.InterviewAPI.model.Status;
-import com.crowdstreet.InterviewAPI.repository.ApiRepository;
+import com.crowdstreet.InterviewAPI.model.RequestDto;
+import com.crowdstreet.InterviewAPI.repository.RequestRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,51 +20,77 @@ import java.util.Optional;
 public class CallbackService {
 
     @Autowired
-    ApiRepository repository;
+    RequestRepository repository;
 
     @Autowired
     ThirdPartyService thirdPartyService;
 
     public String generateRequestId(Request request) {
-        RequestDao requestDao = repository.findRequestByBody(request.getBody());
+        RequestDto requestDto = repository.findRequestByBody(request.getBody());
 
-        if(requestDao == null) {
-            requestDao = new RequestDao();
-            requestDao.setBody(request.getBody());
-            requestDao.setCreated(Date.from(Instant.now()));
-            repository.save(requestDao);
-            log.info("Generated request ID: " + requestDao.getId());
+        if(requestDto == null) {
+            requestDto = new RequestDto();
+            requestDto.setBody(request.getBody());
+            requestDto.setCreated(Date.from(Instant.now()));
+            repository.save(requestDto);
+            log.info("Generated request ID: " + requestDto.getId());
 
             try {
-                thirdPartyService.call(request.getBody(), requestDao.getId().toString());
+                thirdPartyService.call(request.getBody(), requestDto.getId().toString());
             } catch (ThirdPartyException e) {
-                repository.delete(requestDao);
+                repository.delete(requestDto);
                 throw e;
             }
         } else {
             log.info("Request previously found.");
         }
 
-        return requestDao.getId().toString();
+        return requestDto.getId().toString();
     }
 
     public void postCallback(String id) {
         try {
-            RequestDao requestDao = getCallback(id);
-            requestDao.setStatus(Status.STARTED.getValue());
+            RequestDto requestDto = getCallback(id);
+            updateStatus(requestDto, StatusEnum.STARTED.getValue());
+            updateUpdateTime(requestDto);
+            requestDto.setUpdated(Date.from(Instant.now()));
             thirdPartyService.call("STARTED", id);
-            repository.save(requestDao);
+            repository.save(requestDto);
         } catch (ThirdPartyException e) {
             log.error("Post callback to third party failed.");
             throw e;
         }
     }
 
-    public RequestDao getCallback(String id) {
-        Optional<RequestDao> optionalRequestDao = repository.findById(Long.parseLong(id));
+    public RequestDto getCallback(String id) {
+        Optional<RequestDto> optionalRequestDao = repository.findById(Long.parseLong(id));
         if(!optionalRequestDao.isPresent()){
             throw new RequestException("Unable to locate request.");
         }
+        log.debug("Request found: " + optionalRequestDao.get().toString());
         return optionalRequestDao.get();
+    }
+
+    public void putCallback(String id, CallbackPutRequest request) {
+        RequestDto requestDto = getCallback(id);
+        updateDetail(requestDto, request.getDetail());
+        updateStatus(requestDto, request.getStatus());
+        updateUpdateTime(requestDto);
+        repository.save(requestDto);
+    }
+
+    private void updateDetail(RequestDto request, String detail) {
+        request.setDetail(request.getDetail());
+        log.debug("Setting details to: " + request.getDetail());
+    }
+
+    private void updateStatus(RequestDto request, String status) {
+        StatusEnum statusEnum = StatusEnum.valueOf(request.getStatus().toUpperCase().trim());
+        request.setStatus(statusEnum.getValue());
+        log.debug("Setting status to: " + statusEnum.getValue());
+    }
+
+    private void updateUpdateTime(RequestDto request) {
+        request.setUpdated(Date.from(Instant.now()));
     }
 }

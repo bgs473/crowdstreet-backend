@@ -1,7 +1,7 @@
-package com.crowdstreet.InterviewAPI.model;
+package com.crowdstreet.InterviewAPI.enums;
 
 
-public enum Status {
+public enum StatusEnum {
     STARTED("STARTED"),
     PROCESSED("PROCESSED"),
     COMPLETED("COMPLETED"),
@@ -9,7 +9,7 @@ public enum Status {
 
     private String status;
 
-    Status(String status) {
+    StatusEnum(String status) {
         this.status = status;
     }
 

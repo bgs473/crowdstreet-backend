@@ -30,4 +30,10 @@ public class ControllerAdvice {
     public void handleRequestException(RequestException e) {
         log.error("Unable to find request.");
     }
+
+    @ResponseStatus(value = HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(IllegalArgumentException.class)
+    public void handleIllegalArgumentException(IllegalArgumentException e) {
+        log.error("Unable to determine status from Put Request.");
+    }
 }

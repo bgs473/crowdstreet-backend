@@ -1,5 +1,6 @@
 package com.crowdstreet.InterviewAPI.service;
 
+import com.crowdstreet.InterviewAPI.exception.RequestException;
 import com.crowdstreet.InterviewAPI.exception.ThirdPartyException;
 import com.crowdstreet.InterviewAPI.model.Request;
 import com.crowdstreet.InterviewAPI.model.RequestDao;
@@ -8,6 +9,8 @@ import com.crowdstreet.InterviewAPI.repository.ApiRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -48,5 +51,13 @@ public class CallbackService {
             log.error("Post callback to third party failed.");
             throw e;
         }
+    }
+
+    public RequestDao getCallback(String id) {
+        Optional<RequestDao> optionalRequestDao = repository.findById(Long.getLong(id));
+        if(!optionalRequestDao.isPresent()){
+            throw new RequestException("Unable to locate request.");
+        }
+        return optionalRequestDao.get();
     }
 }

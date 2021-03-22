@@ -17,6 +17,8 @@ public class RequestDao {
     @Column(unique = true)
     private String body;
 
+    private String status;
+    private String detail;
     private Date created;
     private Date updated;
 }

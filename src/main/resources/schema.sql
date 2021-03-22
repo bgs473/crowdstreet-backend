@@ -1,0 +1,8 @@
+CREATE TABLE requests (
+  id INT AUTO_INCREMENT  PRIMARY KEY,
+  body VARCHAR(250) NOT NULL,
+  created DATETIME DEFAULT CURRENT_TIMESTAMP,
+  updated DATETIME,
+
+  unique (body)
+);

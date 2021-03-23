@@ -80,17 +80,19 @@ public class CallbackService {
     }
 
     private void updateDetail(RequestDto request, String detail) {
-        request.setDetail(request.getDetail());
+        request.setDetail(detail);
         log.debug("Setting details to: " + request.getDetail());
     }
 
     private void updateStatus(RequestDto request, String status) {
-        StatusEnum statusEnum = StatusEnum.valueOf(request.getStatus().toUpperCase().trim());
+        StatusEnum statusEnum = StatusEnum.valueOf(status.toUpperCase().trim());
         request.setStatus(statusEnum.getValue());
         log.debug("Setting status to: " + statusEnum.getValue());
     }
 
     private void updateUpdateTime(RequestDto request) {
-        request.setUpdated(Date.from(Instant.now()));
+        Date now = Date.from(Instant.now());
+        request.setUpdated(now);
+        log.debug("Setting updated datetime to: " + now.toString());
     }
 }

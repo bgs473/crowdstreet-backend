@@ -40,6 +40,13 @@ public class ThirdPartyService {
         return thirdPartyRequest;
     }
 
+    /**
+     * Stubbed the actual call out.
+     *
+     * The current implementation uses a synchronous call to the third party
+     * vendor. Would have loved to used a messaging queue in case the first request
+     * failed for follow up.
+     */
     private void sendRequest(ThirdPartyRequest request) throws ThirdPartyException{
         log.debug("Sending request to third party with:" + request.toString());
         try {
